@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: rgb(145, 145, 145);
+        overflow: hidden;
+      }
+
+      :not(:root):fullscreen::backdrop {
+        background: rgb(145, 145, 145);
+      }
+
+      #container { /* id: container */
+        height: 100%;
+        width: 100%;
+      }
+
+      .zero-width {
+        width: 0%;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      table td {
+        border-bottom: 2px black solid;
+        border-left: 2px black solid;
+        border-right: 2px black solid;
+      }
+
+      th, td {
+        padding: 0;
+      }
+
+      table {
+        border-spacing: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div style="user-select: none;" onclick="javascript:document.querySelector('body').requestFullscreen();">Full Screen</div>
+    </div>
+  </body>
+  <script src="constants.js"></script>
+  <script src="index.js"></script>
+  <script src="main.js"></script>
+</html>
