@@ -1,5 +1,12 @@
 var container = document.getElementById("container");
 var resizeListeners = [];
+var keyListeners = [];
+
+window.addEventListener("keydown", (e) => {
+  for (var i in keyListeners) {
+    keyListeners[i](e);
+  }
+})
 
 function newElement(createDOM, settings = {}) {
   const {x = 0.0, y = 0.0, isVideo = false} = settings;
@@ -54,18 +61,20 @@ function newInstruction(text, settings = {}) {
 }
 
 function newImage(image, settings = {}) {
+  var imageDOM;
   newElement(() => {
-    var imageDOM;
     imageDOM = new Image();
     imageDOM.src = image;
     return imageDOM;
   }, settings);
+  return imageDOM;
 }
 
 function newVideo(video, settings = {}) {
+  var videoDOM;
   settings.isVideo = true;
   newElement(() => {
-    var videoDOM = document.createElement("video");
+    videoDOM = document.createElement("video");
     // videoDOM.src = video;
     videoDOM.autoplay = true;
     videoDOM.innerHTML = `<source src="${video}" type="video/mp4">`;
@@ -75,6 +84,7 @@ function newVideo(video, settings = {}) {
     }
     return videoDOM;
   }, settings);
+  return videoDOM;
 }
 
 function newProgressBar(seconds, settings = {}) {
@@ -108,17 +118,18 @@ function newProgressBar(seconds, settings = {}) {
 }
 
 function newRatingScale(howmany, settings = {}) {
+  var tr;
   newElement(() => {
     const DOM = document.createElement("div");
     const table = document.createElement("table");
-    const tr = document.createElement("tr");
+    tr = document.createElement("tr");
     const numbers = document.createElement("div");
     DOM.appendChild(table);
     DOM.appendChild(numbers);
     table.appendChild(tr);
     var td = [];
-    for (var i = 0; i < howmany + 1; ++ i) {
-      if (i < howmany) tr.appendChild(document.createElement("td"));
+    for (var i = 0; i < howmany; ++ i) {
+      if (i < howmany - 1) tr.appendChild(document.createElement("td"));
       var number = document.createElement("div")
       numbers.appendChild(number);
       number.innerHTML = i + 1;
@@ -136,8 +147,28 @@ function newRatingScale(howmany, settings = {}) {
       height: "15px",
       width: "100%"
     });
+
     return DOM;
   }, settings);
+  return async function () {
+    var reaction = await KeyPress(Array.from({length: howmany}, (_, index) => String(index + 1)), -1, "key")
+    var key = reaction.code
+    var { left, top } = tr.getBoundingClientRect()
+    var { width } = tr.children[0].getBoundingClientRect()
+    var arrow = document.createElement("div")
+    arrow.innerHTML = "\u25bc"
+    Object.assign(arrow.style, {
+      position: "absolute",
+      left, top,
+      fontSize: "50px",
+      color: "blue"
+    });
+    container.appendChild(arrow)
+    arrow.style.left = left - arrow.offsetWidth / 2 + width * (key - 1);
+    arrow.style.top = top - arrow.offsetHeight / 2;
+    await Timer(1.0)
+    return reaction
+  }
 }
 
 function clearScreen() {
@@ -146,9 +177,10 @@ function clearScreen() {
     window.removeEventListener("resize", resizeListeners[i]);
   }
   resizeListeners = [];
+  keyListeners = [];
 }
 
-function KeyPress(listens, timeout = -1) {
+function KeyPress(listens, timeout = -1, type = "default") {
   var initialTime = Date.now();
   return new Promise((resolve) => {
     if (timeout > 0)
@@ -156,15 +188,24 @@ function KeyPress(listens, timeout = -1) {
         reactionTime: timeout,
         code: null
       }), timeout * 1000);
-    window.addEventListener("keydown", (e) => {
-      if (e.code === listens || listens.includes(e.code)) {
+    keyListeners.push((e) => {
+      var comparing = type === "default" ? e.code : e.key
+      if (comparing === listens || listens.includes(comparing)) {
         var timeElapsed = (Date.now() - initialTime) / 1000;
         resolve({
           reactionTime: timeElapsed,
-          code: e.code
+          code: comparing
         });
       }
     })
+  });
+}
+
+function VideoEnded(video) {
+  return new Promise((resolve) => {
+    video.addEventListener("ended", (e) => {
+      resolve();
+    });
   });
 }
 
@@ -178,9 +219,9 @@ function Timer(time) {
 
 async function manyInstructions(list) {
   for (var i in list) {
-    clearScreen()
     newInstruction(list[i])
     await KeyPress("Space")
+    clearScreen()
   }
 }
 
@@ -190,4 +231,11 @@ function randint(min, max) {
 
 function uniform(min, max) {
   return (max - min) * Math.random() + min;
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }

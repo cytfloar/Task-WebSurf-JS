@@ -41,11 +41,52 @@
       table {
         border-spacing: 0;
       }
+
+      .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+      }
+
+      label {
+        display: block;
+        font-size: 30px;
+        margin-bottom: 5px;
+      }
+
+      input {
+        margin-bottom: 10px;
+        width: 270px;
+        height: 40px;
+        font-size: 30px;
+      }
+
+      input[name="date"] {
+        font-size: 18px;
+      }
     </style>
   </head>
-  <body>
+  <body onload="javascript:document.forms[0].date.value = new Date().toLocaleString('sv').replace(' ', 'T').slice(0, -3)">
     <div id="container">
       <div style="user-select: none;" onclick="javascript:document.querySelector('body').requestFullscreen();">Full Screen</div>
+      <div class="center">
+        <form id="information" name="information" onsubmit="main(event.preventDefault())">
+          <label for="participant">Participant</label>
+          <input type="text" id="participant" name="participant" />
+          <br>
+          <label for="group">Group</label>
+          <input type="text" id="group" name="group" />
+          <br>
+          <label for="session">Session</label>
+          <input type="text" id="session" name="session" />
+          <br>
+          <label for="date">Date</label>
+          <input type="datetime-local" id="date" name="date"/>
+          <br>
+          <input type="submit" value="Submit" style="margin-top: 20px; background-color: #336699; color: white"/>
+        </form>
+      </div>
     </div>
   </body>
   <script src="constants.js"></script>

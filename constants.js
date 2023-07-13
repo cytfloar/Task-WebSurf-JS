@@ -61,7 +61,25 @@ INSTK = `The task is now complete. Thank you for your participation!`
 STAY = "CategorySymbols/StayButton.jpg"
 SKIP = "CategorySymbols/SkipButton.jpg"
 QUIT = "CategorySymbols/QuitButton.jpg"
-VIDPATH = "Stimuli/%s/%s%d.mp4"
+VIDPATH = "Stimuli/{0}/{0}{1}.mp4"
 PRACLOGO = "CategorySymbols/Baby_Animal.jpg"
 
+BLOCKORDER = [
+    {
+        "Order": "LANDSCAPE",
+        "Logo": "CategorySymbols/Landscape.jpg"
+    },
+    {
+        "Order": "ART",
+        "Logo": "CategorySymbols/Art.png"
+    },
+    {
+        "Order": "ANIMAL",
+        "Logo": "CategorySymbols/Baby_Animal.jpg"
+    },
+    {
+        "Order": "DANCE",
+        "Logo": "CategorySymbols/Dance.jpg"
+    }
+]
 
