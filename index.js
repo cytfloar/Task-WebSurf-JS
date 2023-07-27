@@ -1,3 +1,5 @@
+// Created by Serena J. Gu
+
 var container = document.getElementById("container");
 var resizeListeners = [];
 var keyListeners = [];
